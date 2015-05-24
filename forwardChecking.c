@@ -166,7 +166,7 @@ void affectationFC(int** values,int variable, int x){
 int FC(int variable, int** values){
 	/* Spécifications: fonction récursive qui va executer l'algorithme du foward checking sur avec
 	les valeurs values sur une variable. En cours d'amélioration*/
-	int** copie = (int**) malloc(sizeof(int*)*taille_domaine);
+	int** copie = (int**) malloc(sizeof(int*)*nb_sommet);
 	int i,j,x=0,ok=0;
 
 	for(i=0;i<nb_sommet;i++)

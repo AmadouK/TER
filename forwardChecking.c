@@ -8,12 +8,12 @@
 
 #include "forwardChecking.h"
 
-int* affectation ;
+
 
 int** initFC(){
 	/* Spécifications: fonction permettant d'initialiser les variables permettant d'exécuter l'algorithme du foward checking */
 	int** values;
-	int i=0,j=0,k=0,l=0,trouve=0;
+	int i=0,j=0,k=0,l=0,trouve=0,lien=0;
 
 	affectation = (int*) malloc(sizeof(int)*nb_sommet);
 
@@ -28,7 +28,7 @@ int** initFC(){
             for (i=0; i<nb_sommet; i++){
 
                 if (tab.var[j][i]!=NULL){
-
+					lien = 1;
                     // printf("VAriable %d  \n",i);
                     if (tab.var[j][i]->var1==j){
 
@@ -55,9 +55,12 @@ int** initFC(){
 
             }
 
-            if (trouve==1){
+            if (lien == 1 && trouve==1){
 				values[j][k] = 1;
-                trouve=0;
+                trouve = 0;
+				lien = 0;
+			}else if(lien == 0){
+				values[j][k] = 1;
             }else{
 				values[j][k] = 0;
 			}
@@ -65,49 +68,6 @@ int** initFC(){
         }
 
     }
-	return values;
-}
-int** rez_values_FC(){
-	/* Spécifications: fonction permettant de reinitialiser le tableau de domaines après un backtrack */
-	int** values = initFC();
-	int i,j,k;
-	
-	for(i=0;i<nb_sommet;i++){
-		
-		if(affectation[i] != NULL){
-
-			for(j=i+1;j<nb_sommet;j++){
-				
-				if(tab.var[i][j] != NULL){
-
-					if(tab.var[i][j]->var1 == i){
-
-						for(k=0;k<taille_domaine;k++){
-
-							if(tab.var[i][j]->valeurs[affectation[i]][k] == 0)
-								values[i][j] == 0;
-
-						}
-
-					}else{
-
-						for(k=0;k<taille_domaine;k++){
-
-							if(tab.var[i][j]->valeurs[k][affectation[i]] == 0)
-								values[i][j] == 0;
-
-						}
-
-					}
-
-				}
-
-			}
-
-		}
-
-	}
-	
 	return values;
 }
 
@@ -206,13 +166,14 @@ void affectationFC(int** values,int variable, int x){
 int FC(int variable, int** values){
 	/* Spécifications: fonction récursive qui va executer l'algorithme du foward checking sur avec
 	les valeurs values sur une variable. En cours d'amélioration*/
-	int** copie = (int**)malloc(sizeof(int*)*taille_domaine);
+	int** copie = (int**) malloc(sizeof(int*)*taille_domaine);
 	int i,j,x=0,ok=0;
 
 	for(i=0;i<nb_sommet;i++)
 		copie[i] = (int*) malloc(sizeof(int)*taille_domaine);
 
-	for(i=0;i<taille_domaine;i++)
+
+	for(i=0;i<nb_sommet;i++)
 		for(j=0;j<taille_domaine;j++)
 			copie[i][j] = values[i][j];
 
@@ -231,12 +192,16 @@ int FC(int variable, int** values){
 				}
 
 				if(ok == 1){
+
+					/*for(i=0;i<nb_sommet;i++)
+						free(copie[i]);
+						*/
 					//free(copie);
 					return 1;
 				}else{
 					affectation[variable] = NULL;
 
-					for(i=0;i<taille_domaine;i++)
+					for(i=0;i<nb_sommet;i++)
 						for(j=0;j<taille_domaine;j++)
 							values[i][j] = copie[i][j];
 				}
@@ -249,11 +214,13 @@ int FC(int variable, int** values){
 
 	affectation[variable] = NULL;
 
-	for(i=0;i<taille_domaine;i++)
+	for(i=0;i<nb_sommet;i++)
 			for(j=0;j<taille_domaine;j++)
 				values[i][j] = copie[i][j];
 
-
+	/*for(i=0;i<nb_sommet;i++)
+			free(copie[i]);
+			*/
 	//free(copie);
 	return 0;
 }
@@ -263,7 +230,7 @@ void testFC(){
 	int i;
 	int ** values = initFC();
 
-	printf("Tableau de départ du FC\n");
+	printf("Tableau de depart du FC\n");
 	afficheFC(values);
 
 	if ( FC(0, values ) ){

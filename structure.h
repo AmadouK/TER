@@ -9,6 +9,8 @@
 #if !defined  __STRUCTURE_H__
 #define __STRUCTURE_H__
 
+/*Déclarations*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

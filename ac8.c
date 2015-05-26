@@ -74,6 +74,7 @@ void diminuer_domaine(int x,int valeur){
 }
 
 int sortir_liste(){
+	/* Spécifications: fonction permettant d'enlever un élément de la liste*/
 int i=0;
 
     while(liste[i]==NULL && i<nb_sommet)
@@ -131,11 +132,11 @@ void AC8(){
         element =liste[i];
         liste[i]=NULL;
         propagation(element);
-		printf("element %d enleve de la liste \n",element);
-		afficherdom();
-		system("pause");
-		system("cls");
+		//printf("element %d enleve de la liste \n",element);
+		//afficherdom();
+		//system("pause");
+		//system("cls");
 		 i=sortir_liste();
 	}
-	printf("Fin de la boucle, nous sommes au %d eme\n",i);
+	//printf("Fin de la boucle, nous sommes au %d eme\n",i);
 }

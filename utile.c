@@ -4,14 +4,17 @@
 void initVarAuto(){
 	/* Spécifications: fonction permettant de génerer un graphe. Permet de tester la structure */
     int i,j;
+
+	nb_sommet = 4;
+	taille_domaine = 3;
     //Initialisation du tableau
-    tab.var = (var_domaine***) malloc(sizeof(var_domaine*)*3);
+    tab.var = (var_domaine***) malloc(sizeof(var_domaine*)*4);
 
-    for(i=0; i<3; i++){
+    for(i=0; i<4; i++){
         //On génère le tableau à double dimension
-        tab.var[i] = (var_domaine**) malloc(sizeof(var_domaine)*3);
+        tab.var[i] = (var_domaine**) malloc(sizeof(var_domaine)*4);
 
-        for(j=0; j<3; j++){
+        for(j=0; j<4; j++){
             //Toutes les cases du tableau sont initialisées a NULL.
             tab.var[i][j] = NULL;
         }
@@ -21,24 +24,48 @@ void initVarAuto(){
     //Création d'un lien. On crée un var_domaine. Les cases concernées
     //recevront l'adresse du var_domaine
     tab.var[0][1] = tab.var[1][0] = (var_domaine*) malloc(sizeof(var_domaine));
+	tab.var[1][2] = tab.var[2][1] = (var_domaine*) malloc(sizeof(var_domaine));
+	tab.var[2][3] = tab.var[3][2] = (var_domaine*) malloc(sizeof(var_domaine));
+	tab.var[3][0] = tab.var[0][3] = (var_domaine*) malloc(sizeof(var_domaine));
     //Pour éviter une confusion avec les variables,
     //on garde l'ordre dans la structure
-    tab.var[1][0]->var1 = 1;
-    tab.var[1][0]->var2 = 0;
-    tab.var[1][0]->valeurs=(int**)  malloc(sizeof(int*)*3);
+    tab.var[0][1]->var1 = 0;
+    tab.var[0][1]->var2 = 1;
+    tab.var[0][1]->valeurs=(int**)  malloc(sizeof(int*)*3);
 
-    for(i=0; i<3; i++)
-        tab.var[1][0]->valeurs[i]=(int*)  malloc(sizeof(int)*3);
+	tab.var[1][2]->var1 = 1;
+    tab.var[1][2]->var2 = 2;
+    tab.var[1][2]->valeurs=(int**)  malloc(sizeof(int*)*3);
 
+	tab.var[2][3]->var1 = 2;
+    tab.var[2][3]->var2 = 3;
+    tab.var[2][3]->valeurs=(int**)  malloc(sizeof(int*)*3);
+
+	tab.var[3][0]->var1 = 3;
+    tab.var[3][0]->var2 = 0;
+    tab.var[3][0]->valeurs=(int**)  malloc(sizeof(int*)*3);
+
+    for(i=0; i<3; i++){
+        tab.var[0][1]->valeurs[i]=(int*)  malloc(sizeof(int)*3);
+		tab.var[1][2]->valeurs[i]=(int*)  malloc(sizeof(int)*3);
+		tab.var[2][3]->valeurs[i]=(int*)  malloc(sizeof(int)*3);
+		tab.var[3][0]->valeurs[i]=(int*)  malloc(sizeof(int)*3);
+	}
     for(i=0; i<3; i++){
 
         for(j=0; j<3; j++){
 
-            if(i==j)
-                tab.var[1][0]->valeurs[i][j] = 0;
-            else
+            if(i==j){
+                tab.var[0][1]->valeurs[i][j] = 0;
+				tab.var[1][2]->valeurs[i][j] = 0;
+				tab.var[2][3]->valeurs[i][j] = 0;
+				tab.var[3][0]->valeurs[i][j] = 0;
+			}else{
                 tab.var[1][0]->valeurs[i][j] = 1;
-
+				tab.var[1][2]->valeurs[i][j] = 1;
+				tab.var[2][3]->valeurs[i][j] = 1;
+				tab.var[3][0]->valeurs[i][j] = 1;
+			}
         }
 
     }

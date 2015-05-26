@@ -9,7 +9,7 @@ int main(void)
 {
     //initVarAuto();
     //printf("Debut : \n");
-    genereGraphe(5,5,3,0.8);
+    genereGraphe(5,5,3,0.6);
     afficheTab();
 	//system("pause");
 	//AC8();

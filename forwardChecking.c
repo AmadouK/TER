@@ -90,20 +90,20 @@ int CF(int** values,int variable,int x){
 	int ok = 0, lien_var = 0, i = 0, j = 0;
 
 	for(i = variable+1; i< nb_sommet; i++){
-
+		
 		if(tab.var[variable][i] != NULL){
 			lien_var = 1;
 
 			for(j = 0; j < taille_domaine; j++){
 
-				if(tab.var[variable][i]->var1 == j){
+				if(tab.var[variable][i]->var1 == variable){
 
-					if(tab.var[variable][i]->valeurs[j][x] == 1 && values[i][j] == 1)
+					if(tab.var[variable][i]->valeurs[x][j] == 1 && values[i][j] == 1)
 						ok = 1;				
 
 				}else{
 
-					if(tab.var[variable][i]->valeurs[x][j] == 1 && values[i][j] == 1)
+					if(tab.var[variable][i]->valeurs[j][x] == 1 && values[i][j] == 1)
 						ok = 1;
 
 				}
@@ -113,12 +113,12 @@ int CF(int** values,int variable,int x){
 
 		}
 
-		if(ok == 1 || lien_var == 0){
+		if(ok == 0 && lien_var == 1){
+			return 0;
+		}else{
 			ok = 0;
 			lien_var = 0;
-		}else
-			return 0;
-
+		}
 	}
 
 	return 1;
@@ -128,8 +128,8 @@ int CF(int** values,int variable,int x){
 
 void affectationFC(int** values,int variable, int x){
 	/* Spécifications: fonction récursive qui va affecter une valeur x a une variable pendant le
-	foward checking. En cours d'amélioration */
-	int i = 0, j = 0;
+	foward checking. */
+	int i = 0, j = 0, trouve  = 0;
 	for(i=0; i<taille_domaine; i++){
 
 		if(x != i){
@@ -143,19 +143,20 @@ void affectationFC(int** values,int variable, int x){
 
 			for(j = 0; j < taille_domaine; j++){
 
-				if(tab.var[variable][i]->var1 == j){
+				if(tab.var[variable][i]->var1 == variable){
 
-					if(tab.var[variable][i]->valeurs[j][x] == 0 && values[i][j] == 1)
+					if(tab.var[variable][i]->valeurs[x][j] == 0 && values[i][j] == 1)
 						values[i][j] = 0;
 	
 				}else{
 
-					if(tab.var[variable][i]->valeurs[x][j] == 0 && values[i][j] == 1)
+					if(tab.var[variable][i]->valeurs[j][x] == 0 && values[i][j] == 1)
 						values[i][j] = 0;
 
 				}
 
 			}
+			
 
 		}
 
@@ -165,9 +166,9 @@ void affectationFC(int** values,int variable, int x){
 
 int FC(int variable, int** values){
 	/* Spécifications: fonction récursive qui va executer l'algorithme du foward checking sur avec
-	les valeurs values sur une variable. En cours d'amélioration*/
+	les valeurs values sur une variable.*/
 	int** copie = (int**) malloc(sizeof(int*)*nb_sommet);
-	int i,j,x=0,ok=0;
+	int i,j,k,ok=0;
 
 	for(i=0;i<nb_sommet;i++)
 		copie[i] = (int*) malloc(sizeof(int)*taille_domaine);
@@ -178,13 +179,14 @@ int FC(int variable, int** values){
 			copie[i][j] = values[i][j];
 
 	for(i=0;i<taille_domaine;i++){
-		x = values[variable][i];
 
-		if(x == 1){
+		if(values[variable][i] == 1){
 
-			if( CF(values,variable,x) ){
+			if( CF(values,variable,i) ){
 				affectation[variable] = i;
 				affectationFC(values,variable,i);
+				printf("Affectation de la variable %d a la valeur %d\n",variable,i);
+				afficheFC(values);
 				ok = 1;
 
 				if(variable+1 < nb_sommet){
@@ -199,25 +201,30 @@ int FC(int variable, int** values){
 					//free(copie);
 					return 1;
 				}else{
+					printf("L'affectation de la variable %d a la valeur %d ne marche pas, backtrack\n",variable,affectation[variable]);
 					affectation[variable] = NULL;
 
-					for(i=0;i<nb_sommet;i++)
+					for(k=0;k<nb_sommet;k++)
 						for(j=0;j<taille_domaine;j++)
-							values[i][j] = copie[i][j];
+							values[k][j] = copie[k][j];
+					
+						afficheFC(values);
 				}
 
+			}else{
+				printf("Impossible d'affecter la variable %d a la valeur %d\n",variable,i);
 			}
 
 		}
 
 	}
-
+	//printf("L'affectation de la variable %d a la valeur %d ne marche pas, backtrack\n",variable,affectation[variable]);
 	affectation[variable] = NULL;
 
 	for(i=0;i<nb_sommet;i++)
 			for(j=0;j<taille_domaine;j++)
 				values[i][j] = copie[i][j];
-
+	//afficheFC(values);
 	/*for(i=0;i<nb_sommet;i++)
 			free(copie[i]);
 			*/

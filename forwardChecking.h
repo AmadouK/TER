@@ -11,6 +11,7 @@
 
 /*Déclarations*/
 #include "utile.h"
+#include "heuristique.h"
 
 /* Variabble globale permettant de garder les valeurs des variables affectées */
 int* affectation ;
@@ -35,5 +36,20 @@ void affectationFC(int** values,int variable, int x);
 
 /* Spécifications: fonction qui permet de tester l'algorithme du foward checking*/
 void testFC();
+
+/* Spécifications: fonction permettant d'initialiser les variables permettant d'exécuter l'algorithme du foward checking */
+int** initFC_heuristique();
+
+/* Spécifications: fonction récursive qui va executer l'algorithme du foward checking sur avec
+les valeurs values sur une variable.*/
+int FC_heuristique(int variable, int** values);
+
+/* Spécifications: fonction récursive qui va affecter une valeur x a une variable pendant le
+foward checking. */
+void affectationFC_heuristique(int** values,int variable, int x);
+
+/* Spécifications: fonction qui va verifier que l'initialisation d'une variable à x n'empèche
+pas d'avoir des valeurs dans les autres variables*/
+int CF_heuristique(int** values,int variable,int x);
 
 #endif /* forwardChecking  */

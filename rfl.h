@@ -12,12 +12,16 @@
 
 #include "utile.h"
 #include "ac8.h"
+#include "heuristique.h"
 
 /* Variabble globale permettant de garder les valeurs des variables affectées */
 int* affectation ;
 
 /* Spécifications: fonction permettant d'initialiser les variables permettant d'exécuter l'algorithme RFL */
 void initRFL();
+
+/* Spécifications: fonction permettant d'initialiser les variables permettant d'exécuter l'algorithme RFL */
+void initRFL_Heuristique();
 
 /* Spécifications: fonction permettant de récupérer le domaine de chaque variable */
 int **getDomaine();
@@ -27,6 +31,9 @@ void afficheRFL(int** values);
 
 /*Spécifications : Fonction permettant d'executer l'algorithme du RFL sur une variable*/
 int RFL(int variable);
+
+/*Spécifications : Fonction permettant d'executer l'algorithme du RFL sur une variable*/
+int RFL_Heuristique(int variable,int choixHeuristique);
 
  /*Spécifications : Fonction permettant de modifier la structure pour simuler l'affectation de la variable à x*/
 void affectationRFL(int variable, int x);

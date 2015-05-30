@@ -9,7 +9,7 @@ int main(void)
 {
     //initVarAuto();
     //printf("Debut : \n");
-    genereGraphe(4,4,4,0.6);
+    genereGraphe(100,10,5,0.9);
     afficheTab();
 	//system("pause");
 	//AC8();
@@ -17,7 +17,7 @@ int main(void)
 	//system("cls");
 	//afficherdom();
 	/*system("cls");*/
-	testFC();
+	//testFC();
 	testRFL();
     EXIT_SUCCESS;
 }

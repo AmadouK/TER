@@ -6,6 +6,17 @@ void initRFL(){
 	AC8();
 }
 
+void initRFL_Heuristique(){
+	/* Spécifications: fonction permettant d'initialiser les variables permettant d'exécuter l'algorithme RFL */
+	int i;
+	var_affectee = (int*) malloc(sizeof(int)*nb_sommet);
+	for(i=0;i<nb_sommet;i++)
+		var_affectee[i] = 0;
+
+	affectation = (int*) malloc(sizeof(int)*nb_sommet);
+	AC8();
+}
+
 void afficheRFL(int** values){
 	/* Spécifications: fonction permettant d'afficher les variables dans le tableau du RFL*/
 	int i,j;
@@ -160,7 +171,7 @@ void backtrack_RFL(tab_variable copie){
 					if(j != x)
 						for(k=0;k<taille_domaine;k++)
 						{
-							tab.var[i][variable]->valeurs[j][k] = tab.var[variable][i]->valeurs[j][k] = 0;
+								tab.var[i][variable]->valeurs[j][k] = tab.var[variable][i]->valeurs[j][k] = 0;
 						}
 				}
 			}
@@ -178,23 +189,24 @@ void backtrack_RFL(tab_variable copie){
 
 		}
 	}
-
 	
 }
+
 int RFL(int variable){
 	/*Spécifications : Fonction permettant d'executer l'algorithme du RFL sur une variable*/
 	int i,j,ok;
 	int** values = getDomaine();
 	tab_variable copie = createCopie();
 
-	afficheRFL(values);
+	//afficheRFL(values);
 	for(i=0; i<taille_domaine; i++)
 	{
 		if(values[variable][i] == 1)
 		{
+			nbAffectation++;
 			affectationRFL(variable,i);
-			affectation[variable] = i;
-			printf("Affectation de la variable %d a la valeur %d\n",variable,affectation[variable]);
+			affectation[variable] = i; 
+			//printf("Affectation de la variable %d a la valeur %d\n",variable,affectation[variable]);
 			AC8();
 			ok = 1;
 			if(variable+1 < nb_sommet){
@@ -203,11 +215,61 @@ int RFL(int variable){
 			if(ok){
 				return 1;
 			}else{
-				printf("L'affectation de la variable %d a la valeur %d ne marche pas, backtrack\n",variable,affectation[variable]);
+				//printf("L'affectation de la variable %d a la valeur %d ne marche pas, backtrack\n",variable,affectation[variable]);
 				affectation[variable] = NULL;
 				backtrack_RFL(copie);
 				//values = getDomaine();
-				afficheRFL(values);
+				//afficheRFL(values);
+			}
+		}
+	}
+
+	affectation[variable] = NULL;
+	backtrack_RFL(copie);
+	return 0;
+}
+
+
+int RFL_Heuristique(int variable,int choixHeuristique){
+	/*Spécifications : Fonction permettant d'executer l'algorithme du RFL sur une variable*/
+	int i,j,ok,nextVar;
+	int** values = getDomaine();
+	tab_variable copie = createCopie();
+
+	//afficheRFL(values);
+	for(i=0; i<taille_domaine; i++)
+	{
+		if(values[variable][i] == 1)
+		{
+			affectationRFL(variable,i);
+			affectation[variable] = i; 
+			nbAffectationHeuristique ++;
+			//printf("Affectation de la variable %d a la valeur %d\n",variable,affectation[variable]);
+			AC8();
+			ok = 1;
+
+			switch (choixHeuristique){
+					case 1:
+					nextVar =  h_min_domaine(values);
+					break;
+					case 2:
+					nextVar =  h_first_fail(values);
+					//printf("prochaine valeur %d\n",nextVar);
+					break;
+				}
+
+			if(nextVar != -1){
+				ok = RFL(variable+1);
+			}
+
+			if(ok){
+				return 1;
+			}else{
+				//printf("L'affectation de la variable %d a la valeur %d ne marche pas, backtrack\n",variable,affectation[variable]);
+				affectation[variable] = NULL;
+				backtrack_RFL(copie);
+				//values = getDomaine();
+				//afficheRFL(values);
 			}
 		}
 	}
@@ -219,18 +281,50 @@ int RFL(int variable){
 
 void testRFL(){
 	/*Spécifications : Fonction permettant de démarrer l'algoriithme RFL sur tout la structure*/
-	int i;
+	int i,nextVar=0,choixHeuristique = 1;
+	tab_variable copie = createCopie();
+	nbAffectation = 0;
+	nbAffectationHeuristique = 0;
 	initRFL();
 	printf("\nDepart du RFL\n\n");
 	//afficheRFL(getDomaine());
 	if ( RFL(0) ){
 		printf("Il y a une solution\nTableau final du RFL\nValeurs des affectations: \n");
-		for(i=0;i<nb_sommet;i++){
+		/*for(i=0;i<nb_sommet;i++){
 			printf("Variable %d : %d \n",i,affectation[i]);
 		}
-		afficheRFL(getDomaine());
+		afficheRFL(getDomaine());*/
 	}else{
 		printf("Pas de solution\n");
-		afficheRFL(getDomaine());
+		//afficheRFL(getDomaine());
 	}
+	printf("Nombre d'affectations RFL sans heuristique :%d\n",nbAffectation);
+	nbAffectationHeuristique = 0;
+	initRFL_Heuristique();
+	backtrack_RFL(copie);
+	nextVar =  h_min_domaine(getDomaine());
+	if ( RFL_Heuristique(nextVar,1)){
+		printf("Il y a une solution\nTableau final du RFL\nValeurs des affectations: \n");
+		/*for(i=0;i<nb_sommet;i++){
+			printf("Variable %d : %d \n",i,affectation[i]);
+		}
+		afficheRFL(getDomaine());*/
+	}else{
+		printf("Pas de solution\n");
+		//afficheRFL(getDomaine());
+	}
+	printf("Nombre d'affectations RFL avec heuristique :%d\n",nbAffectation);
+	backtrack_RFL(copie);
+	nextVar =  h_first_fail(getDomaine());
+	if ( RFL_Heuristique(nextVar,2)){
+		printf("Il y a une solution\nTableau final du RFL\nValeurs des affectations: \n");
+		/*for(i=0;i<nb_sommet;i++){
+			printf("Variable %d : %d \n",i,affectation[i]);
+		}
+		afficheRFL(getDomaine());*/
+	}else{
+		printf("Pas de solution\n");
+		//afficheRFL(getDomaine());
+	}
+	printf("Nombre d'affectations RFL avec heuristique :%d\n",nbAffectation);
 }

@@ -248,10 +248,15 @@ int FC(int variable, int** values){
 		if(values[variable][i] == 1){
 
 			if( CF(values,variable,i) ){
+				nbAffectation++;
+				/*if(nbAffectation==1000){
+					printf("Trop d'affectation\n");
+					exit(EXIT_FAILURE);
+				}*/
 				affectation[variable] = i;
 				affectationFC(values,variable,i);
-				printf("Affectation de la variable %d a la valeur %d\n",variable,i);
-				afficheFC(values);
+				//printf("Affectation de la variable %d a la valeur %d\n",variable,i);
+				//afficheFC(values);
 				ok = 1;
 
 				if(variable+1 < nb_sommet){
@@ -260,24 +265,24 @@ int FC(int variable, int** values){
 
 				if(ok == 1){
 
-					/*for(i=0;i<nb_sommet;i++)
+					for(i=0;i<nb_sommet;i++)
 						free(copie[i]);
-						*/
-					//free(copie);
+						
+					free(copie);
 					return 1;
 				}else{
-					printf("L'affectation de la variable %d a la valeur %d ne marche pas, backtrack\n",variable,affectation[variable]);
+					//printf("L'affectation de la variable %d a la valeur %d ne marche pas, backtrack\n",variable,affectation[variable]);
 					affectation[variable] = NULL;
 
 					for(k=0;k<nb_sommet;k++)
 						for(j=0;j<taille_domaine;j++)
 							values[k][j] = copie[k][j];
 					
-						afficheFC(values);
+						//afficheFC(values);
 				}
 
 			}else{
-				printf("Impossible d'affecter la variable %d a la valeur %d\n",variable,i);
+				//printf("Impossible d'affecter la variable %d a la valeur %d\n",variable,i);
 			}
 
 		}
@@ -290,10 +295,10 @@ int FC(int variable, int** values){
 			for(j=0;j<taille_domaine;j++)
 				values[i][j] = copie[i][j];
 	//afficheFC(values);
-	/*for(i=0;i<nb_sommet;i++)
+	for(i=0;i<nb_sommet;i++)
 			free(copie[i]);
-			*/
-	//free(copie);
+			
+	free(copie);
 	return 0;
 }
 
@@ -408,12 +413,13 @@ int FC_heuristique(int variable, int** values,int choixHeuristique){
 
 		if(values[variable][i] == 1){
 
-			if( CF(values,variable,i) ){
+			if( CF_heuristique(values,variable,i) ){
+				nbAffectationHeuristique ++;
 				affectation[variable] = i;
 				affectationFC_heuristique(values,variable,i);
-				h_affiche_var_affectee();
-				printf("Affectation de la variable %d a la valeur %d\n",variable,i);
-				afficheFC(values);
+				//h_affiche_var_affectee();
+				//printf("Affectation de la variable %d a la valeur %d\n",variable,i);
+				//afficheFC(values);
 				ok = 1;
 
 				switch (choixHeuristique){
@@ -422,7 +428,7 @@ int FC_heuristique(int variable, int** values,int choixHeuristique){
 					break;
 					case 2:
 					nextVar =  h_first_fail(values);
-					printf("prochaine valeur %d\n",nextVar);
+					//printf("prochaine valeur %d\n",nextVar);
 					break;
 				}
 
@@ -432,24 +438,24 @@ int FC_heuristique(int variable, int** values,int choixHeuristique){
 
 				if(ok == 1){
 
-					/*for(i=0;i<nb_sommet;i++)
+					for(i=0;i<nb_sommet;i++)
 						free(copie[i]);
-						*/
-					//free(copie);
+						
+					free(copie);
 					return 1;
 				}else{
-					printf("L'affectation de la variable %d a la valeur %d ne marche pas, backtrack\n",variable,affectation[variable]);
+					//printf("L'affectation de la variable %d a la valeur %d ne marche pas, backtrack Heuristique\n",variable,affectation[variable]);
 					affectation[variable] = NULL;
 
 					for(k=0;k<nb_sommet;k++)
 						for(j=0;j<taille_domaine;j++)
 							values[k][j] = copie[k][j];
 					
-						afficheFC(values);
+						//afficheFC(values);
 				}
 
 			}else{
-				printf("Impossible d'affecter la variable %d a la valeur %d\n",variable,i);
+				//printf("Impossible d'affecter la variable %d a la valeur %d\n",variable,i);
 			}
 
 		}
@@ -462,55 +468,65 @@ int FC_heuristique(int variable, int** values,int choixHeuristique){
 			for(j=0;j<taille_domaine;j++)
 				values[i][j] = copie[i][j];
 	//afficheFC(values);
-	/*for(i=0;i<nb_sommet;i++)
+	for(i=0;i<nb_sommet;i++)
 			free(copie[i]);
-			*/
-	//free(copie);
+			
+	free(copie);
 	var_affectee[variable] = 0;
 	return 0;
 }
 
 void testFC(){
 	/* Spécifications: fonction qui permet de tester l'algorithme du foward checking*/
-	int i,nextVar,choixHeuristique = 2;
+	int i,nextVar=0,choixHeuristique = 1;
 	int ** values = initFC();
+	nbAffectation = 0;
 
-	printf("Tableau de depart du FC\n");
-	afficheFC(values);
+	nbAffectationHeuristique = 0;
+	//printf("Tableau de depart du FC\n");
+	//afficheFC(values);
 
 	if ( FC(0, values ) ){
 		printf("Il y a une solution\nTableau final du FC\nValeurs des affectations: \n");
-		for(i=0;i<nb_sommet;i++){
+		/*for(i=0;i<nb_sommet;i++){
 			printf("Variable %d : %d \n",i,affectation[i]);
-		}
-		afficheFC(values);
+		}*/
+		//afficheFC(values);
 	}else{
 		printf("Pas de solution\n");
-		afficheFC(values);
+		//afficheFC(values);
 	}
-
+	printf("Nombre d'affectations FC sans heuristique :%d\n",nbAffectation);
+	
+	free(affectation);
 	values = initFC_heuristique();
-	switch (choixHeuristique){
-					case 1:
-					nextVar =  h_min_domaine(values);
-					break;
-					case 2:
-					nextVar =  h_first_fail(values);
-					break;
-				}
-	printf("Tableau de depart du FC avec heuristique\n");
-	afficheFC(values);
-
-	if ( FC_heuristique(nextVar, values,choixHeuristique) ){
+	nextVar =  h_min_domaine(values);
+	if ( FC_heuristique(nextVar, values,1) ){
 		printf("Il y a une solution\nTableau final du FC avec heuristique\nValeurs des affectations: \n");
-		for(i=0;i<nb_sommet;i++){
+		/*for(i=0;i<nb_sommet;i++){
 			printf("Variable %d : %d \n",i,affectation[i]);
-		}
-		afficheFC(values);
+		}*/
+		//afficheFC(values);
 	}else{
 		printf("Pas de solution\n");
-		afficheFC(values);
+		//afficheFC(values);
 	}
-
+	printf("Nombre d'affectations min domaine :%d\n",nbAffectationHeuristique);
+	nbAffectationHeuristique = 0;
+	free(affectation);
+	free(var_affectee);
+	values = initFC_heuristique();
+	nextVar =  h_first_fail(values);
+	if ( FC_heuristique(nextVar, values,2) ){
+		printf("Il y a une solution\nTableau final du FC avec heuristique\nValeurs des affectations: \n");
+		/*for(i=0;i<nb_sommet;i++){
+			printf("Variable %d : %d \n",i,affectation[i]);
+		}*/
+		//afficheFC(values);
+	}else{
+		printf("Pas de solution\n");
+		//afficheFC(values);
+	}
+	printf("Nombre d'affectations first fail  :%d\n",nbAffectationHeuristique);
 }
 

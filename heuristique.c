@@ -24,39 +24,11 @@ int h_min_domaine(int** values){
 		}
 
 	}
-	
+	//afficheFC(values);
 	return sommet;
 
 }
 
-int h_max_contrainte(){	
-/* Spécifications: fonction permettant de choisir la variable avec le domaine le plus petit domaine dans un algorithme*/
-	int i,j,max = -1 ,compteur = 0,sommet = -1;
-
-	for (i=0;i<nb_sommet;i++){
-
-		if(var_affectee[i] == 0){
-			compteur = 0;
-
-			for (j=0;j<nb_sommet;j++){
-
-				if (tab.var[i][j] !=  NULL)
-					compteur++;
-
-			}
-
-			if(compteur > max){
-				max = compteur;
-				sommet = i;
-			}
-
-		}
-
-	}
-	
-	return sommet;
-
-}
 
 int h_first_fail(int **values){	
 /* Spécifications: fonction permettant de choisir la variable avec le domaine le plus petit domaine dans un algorithme*/
@@ -74,6 +46,7 @@ int h_first_fail(int **values){
 					nb_lien++;
 
 			}
+			nb_domaine = 0;
 			//calculer le nombre de valeurs qu'on peut affecter à une variable
 			for (j=0;j<taille_domaine;j++){
 
@@ -81,8 +54,10 @@ int h_first_fail(int **values){
 					nb_domaine++;
 
 			}
-
-			if(nb_lien == 0 && min == 1000.){
+			if(nb_domaine == 0){
+				min = 0;
+				sommet = i;
+			}else if(nb_lien == 0 && min == 1000.){
 				sommet = i;
 			}else if( min > ((float)nb_domaine/(float)nb_lien) ){
 				min = ((float)nb_domaine/(float)nb_lien);
@@ -94,7 +69,7 @@ int h_first_fail(int **values){
 		
 
 	}
-	
+	//afficheFC(values);
 	return sommet;
 
 }
